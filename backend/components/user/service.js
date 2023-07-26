@@ -1,28 +1,53 @@
-const model = require("./model");
+const userModel = require("./model");
 const boom = require("@hapi/boom");
 const bcrypt = require("bcrypt");
+const FollowService = require("../follow/service");
+const followService = new FollowService();
 
 class UseService {
-  async find() {
-    const users = await model.find();
-    const usersData = [];
-    for (let i = 0; i < users.length; i++) {
-      const user = {
-        _id: users[i]._id,
-        name: users[i].name,
-        lastname: users[i].lastname,
-        nick: users[i].nick,
-        email: users[i].email,
-        role: users[i].role,
-        createAt: users[i].createAt,
-      };
-      usersData.push(user);
-    }
-    return usersData;
+  async find(page = 1, limit = 1, userId) {
+    const options = {
+      select: { password: 0, role: 0 },
+      sort: "_id",
+      page,
+      limit,
+    };
+    const users = await userModel.paginate({}, options);
+    const userFollowing = await followService.followUserIds(userId);
+    return {
+      page: users.page,
+      itemsPerPage: users.limit,
+      totalPage: users.totalPages,
+      users: users.docs,
+      user_following: userFollowing.following,
+      user_follow_me: userFollowing.followers,
+    };
   }
+
+  async findById(id, userId) {
+    const user = await userModel.findById(id).select({ password: 0, role: 0 });
+    const followInfo = await followService.followThisUser(id, userId);
+    if (!user) {
+      throw boom.unauthorized();
+    }
+    return {
+      user,
+      following: followInfo.following,
+      follower: followInfo.follower,
+    };
+  }
+
+  async findByEmail(email) {
+    const user = await userModel.findOne({ email: email }).select("+password");
+    if (!user) {
+      throw boom.notFound("User not found");
+    }
+    return user;
+  }
+
   async create(data) {
     const hash = await bcrypt.hash(data.password, 10);
-    const newUser = await model({
+    const newUser = await userModel({
       ...data,
       password: hash,
     });
@@ -35,6 +60,36 @@ class UseService {
       role: newUser.role,
       createAt: newUser.createAt,
     };
+  }
+
+  async updtate(id, body) {
+    if (body.password) {
+      const hash = await bcrypt.hash(body.password, 10);
+      const userData = {
+        ...body,
+        password: hash,
+      };
+      const user = await userModel
+        .findByIdAndUpdate(id, userData, { new: true })
+        .select({ password: 0 });
+      if (!user) {
+        throw boom.notFound("User not found");
+      }
+      return user;
+    } else {
+      const user = await userModel
+        .findByIdAndUpdate(id, body, { new: true })
+        .select({ password: 0 });
+      if (!user) {
+        throw boom.notFound("User not found");
+      }
+      return user;
+    }
+  }
+
+  async delete(id) {
+    await userModel.findByIdAndDelete(id);
+    return { response: true };
   }
 }
 

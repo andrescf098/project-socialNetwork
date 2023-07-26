@@ -24,7 +24,7 @@ const createUserSchema = Joi.object({
   role: role,
 });
 
-const updateUserSchema = {
+const updateUserSchema = Joi.object({
   name,
   lastname,
   nick,
@@ -32,6 +32,6 @@ const updateUserSchema = {
   password,
   image,
   role: role.invalid("admin"),
-};
+});
 
 module.exports = { getUserSchema, createUserSchema, updateUserSchema };
