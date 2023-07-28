@@ -2,7 +2,7 @@ const express = require("express");
 const passport = require("passport");
 const router = express.Router();
 const UserController = require("./controller");
-const uploadImage = require("../../utils/storage");
+const upload = require("../../utils/storageAvatar");
 const {
   getUserSchema,
   createUserSchema,
@@ -30,15 +30,22 @@ router.get(
   "/user/:id",
   [
     passport.authenticate("jwt", { session: false }),
+    checkAuthorizedRoles(...ROLES.registeredUser),
     validatorHandler(getUserSchema, "params"),
   ],
   controller.getById
 );
 
+router.get("/avatar/:file", controller.getAvatar);
+
 router.get(
-  "/avatar/:file",
-  [passport.authenticate("jwt", { session: false })],
-  controller.getAvatar
+  "/count/:id?",
+  [
+    passport.authenticate("jwt", { session: false }),
+    checkAuthorizedRoles(...ROLES.registeredUser),
+  ],
+
+  controller.count
 );
 
 router.post(
@@ -59,15 +66,29 @@ router.patch(
   controller.update
 );
 
+router.patch(
+  "/admin/:id",
+  [
+    passport.authenticate("jwt", { session: false }),
+    checkAuthorizedRoles(...ROLES.admin),
+    validatorHandler(getUserSchema, "params"),
+    validatorHandler(updateUserSchema, "body"),
+  ],
+  controller.update
+);
+
 router.post(
   "/upload",
-  passport.authenticate("jwt", { session: false }),
-  [uploadImage.single("file0")],
+  [
+    passport.authenticate("jwt", { session: false }),
+    checkAuthorizedRoles(...ROLES.registeredUser),
+    upload.single("file0"),
+  ],
   controller.upload
 );
 
 router.delete(
-  "/:id",
+  "/admin/:id",
   [
     passport.authenticate("jwt", { session: false }),
     checkAuthorizedRoles(...ROLES.admin),

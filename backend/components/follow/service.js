@@ -23,7 +23,7 @@ class FollowService {
       limit,
       populate: {
         path: "user followed",
-        select: "-password -role -__v",
+        select: "-password -role -__v -email",
       },
     };
     const following = await followModel.paginate(query, options);
@@ -47,7 +47,7 @@ class FollowService {
       limit,
       populate: {
         path: "user",
-        select: "-password -role -__v",
+        select: "-password -role -__v -email",
       },
     };
     const following = await followModel.paginate(query, options);

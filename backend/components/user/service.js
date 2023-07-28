@@ -7,7 +7,7 @@ const followService = new FollowService();
 class UseService {
   async find(page = 1, limit = 1, userId) {
     const options = {
-      select: { password: 0, role: 0 },
+      select: { password: 0, role: 0, email: 0, __v: 0 },
       sort: "_id",
       page,
       limit,
@@ -25,7 +25,9 @@ class UseService {
   }
 
   async findById(id, userId) {
-    const user = await userModel.findById(id).select({ password: 0, role: 0 });
+    const user = await userModel
+      .findById(id)
+      .select({ password: 0, role: 0, email: 0, __v: 0 });
     const followInfo = await followService.followThisUser(id, userId);
     if (!user) {
       throw boom.unauthorized();

@@ -1,18 +1,19 @@
 const UserService = require("./service");
 const fs = require("fs");
-const jwt = require("jsonwebtoken");
 const model = require("./model");
+const followModel = require("../follow/model");
+const publicationModel = require("../publication/model");
 const path = require("path");
 const userService = new UserService();
 
 class UserController {
   async list(req, res, next) {
     try {
-      const token = req.headers.authorization.split(" ")[1];
-      const userId = jwt.decode(token).sub;
       return res
         .status(200)
-        .json(await userService.find(req.query.page, req.query.limit, userId));
+        .json(
+          await userService.find(req.query.page, req.query.limit, req.user.sub)
+        );
     } catch (error) {
       next(error);
     }
@@ -20,13 +21,29 @@ class UserController {
 
   async getById(req, res, next) {
     try {
-      const token = req.headers.authorization.split(" ")[1];
-      const userId = jwt.decode(token).sub;
       const { id } = req.params;
-      return res.status(200).json(await userService.findById(id, userId));
+      return res.status(200).json(await userService.findById(id, req.user.sub));
     } catch (error) {
       next(error);
     }
+  }
+
+  async count(req, res, next) {
+    let userId = req.user.sub;
+    if (req.params.id) {
+      userId = req.params.id;
+    }
+    try {
+      const following = await followModel.count({ user: userId });
+      const followed = await followModel.count({ followed: userId });
+      const publications = await publicationModel.count({ user: userId });
+      return res.status(200).json({
+        userId,
+        following,
+        followed,
+        publications,
+      });
+    } catch (error) {}
   }
 
   async create(req, res, next) {
@@ -67,13 +84,12 @@ class UserController {
           "Invalid file extension, only extensions are supported (png, jpg, jpeg or gif)",
       };
     } else {
-      const token = req.headers.authorization.split(" ")[1];
       res
         .status(200)
         .json(
           await model
             .findByIdAndUpdate(
-              jwt.decode(token).sub,
+              req.user.sub,
               { image: req.file.filename },
               { new: true }
             )
@@ -89,7 +105,7 @@ class UserController {
         res.status(200).sendFile(path.resolve(pathFile));
       } else {
         res.status(404).send({
-          Error: error.message,
+          message: "File not found",
         });
       }
     });

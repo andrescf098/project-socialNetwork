@@ -1,5 +1,6 @@
 const boom = require("@hapi/boom");
 const { config } = require("../config");
+const publicationModel = require("../components/publication/model");
 
 const checkApiKey = (req, res, next) => {
   const apiKey = req.headers["x-api-key"];
@@ -21,11 +22,17 @@ const checkAuthorizedRoles = (...roles) => {
 };
 const checkIdForUser = () => {
   return async (req, res, next) => {
-    const userIdFromArticle = await userModel.findById(req.params.id);
-    const user = req.user.sub;
-    if (String(user) === String(userIdFromArticle._id)) {
-      next();
-    } else {
+    try {
+      const userIdFromPublication = await publicationModel.findById(
+        req.params.id
+      );
+      const user = req.user.sub;
+      if (String(user) === String(userIdFromPublication.user)) {
+        next();
+      } else {
+        next(boom.unauthorized());
+      }
+    } catch (error) {
       next(boom.unauthorized());
     }
   };

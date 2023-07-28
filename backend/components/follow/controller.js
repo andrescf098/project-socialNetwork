@@ -1,46 +1,41 @@
-const jwt = require("jsonwebtoken");
 const FollowService = require("./service");
 const service = new FollowService();
 
 class FollowController {
   async save(req, res, next) {
     const { idFollowed } = req.body;
-    const token = req.headers.authorization.split(" ")[1];
-    const userId = jwt.decode(token).sub;
     try {
-      res.status(200).json(await service.save(userId, idFollowed));
+      res.status(200).json(await service.save(req.user.sub, idFollowed));
     } catch (error) {
       next(error);
     }
   }
   async unfollow(req, res, next) {
     const idFollowed = req.params.id;
-    const token = req.headers.authorization.split(" ")[1];
-    const userId = jwt.decode(token).sub;
     try {
-      res.status(200).json(await service.unfollow(userId, idFollowed));
+      res.status(200).json(await service.unfollow(req.user.sub, idFollowed));
     } catch (error) {
       next(error);
     }
   }
   async following(req, res, next) {
-    const token = req.headers.authorization.split(" ")[1];
-    const userId = jwt.decode(token).sub;
     try {
       res
         .status(200)
-        .json(await service.following(userId, req.query.page, req.query.limit));
+        .json(
+          await service.following(req.user.sub, req.query.page, req.query.limit)
+        );
     } catch (error) {
       next(error);
     }
   }
   async followers(req, res, next) {
-    const token = req.headers.authorization.split(" ")[1];
-    const userId = jwt.decode(token).sub;
     try {
       res
         .status(200)
-        .json(await service.followers(userId, req.query.page, req.query.limit));
+        .json(
+          await service.followers(req.user.sub, req.query.page, req.query.limit)
+        );
     } catch (error) {
       next(error);
     }
