@@ -7,7 +7,7 @@ const ROLES = require("../../utils/permissions.util");
 const controller = new FollowController();
 
 router.get(
-  "/following",
+  "/following/:id",
   [
     passport.authenticate("jwt", { session: false }),
     checkAuthorizedRoles(...ROLES.registeredUser),
@@ -16,7 +16,7 @@ router.get(
 );
 
 router.get(
-  "/followers",
+  "/followers/:id",
   [
     passport.authenticate("jwt", { session: false }),
     checkAuthorizedRoles(...ROLES.registeredUser),

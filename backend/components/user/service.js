@@ -18,6 +18,7 @@ class UseService {
       page: users.page,
       itemsPerPage: users.limit,
       totalPage: users.totalPages,
+      totalUsers: users.totalDocs,
       users: users.docs,
       user_following: userFollowing.following,
       user_follow_me: userFollowing.followers,

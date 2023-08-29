@@ -35,6 +35,7 @@ class FollowService {
       page: following.page,
       itemPerPage: following.limit,
       totalPages: following.totalPages,
+      totalFollowing: following.totalDocs,
       following: following.docs,
       user_following: userFollowing.following,
       user_follow_me: userFollowing.followers,
@@ -50,18 +51,19 @@ class FollowService {
         select: "-password -role -__v -email",
       },
     };
-    const following = await followModel.paginate(query, options);
-    if (!following) {
+    const followers = await followModel.paginate(query, options);
+    if (!followers) {
       throw boom.notFound();
     }
-    const userFollowing = await this.followUserIds(userId);
+    const userFollowers = await this.followUserIds(userId);
     return {
-      page: following.page,
-      itemPerPage: following.limit,
-      totalPages: following.totalPages,
-      following: following.docs,
-      user_following: userFollowing.following,
-      user_follow_me: userFollowing.followers,
+      page: followers.page,
+      itemPerPage: followers.limit,
+      totalPages: followers.totalPages,
+      totalFollowers: followers.totalDocs,
+      followers: followers.docs,
+      user_following: userFollowers.following,
+      user_follow_me: userFollowers.followers,
     };
   }
 

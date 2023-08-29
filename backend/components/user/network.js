@@ -21,13 +21,13 @@ router.get(
   "/",
   [
     passport.authenticate("jwt", { session: false }),
-    checkAuthorizedRoles(...ROLES.admin),
+    checkAuthorizedRoles(...ROLES.registeredUser),
   ],
   controller.list
 );
 
 router.get(
-  "/user/:id",
+  "/profile/:id",
   [
     passport.authenticate("jwt", { session: false }),
     checkAuthorizedRoles(...ROLES.registeredUser),

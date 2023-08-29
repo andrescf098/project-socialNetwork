@@ -23,7 +23,11 @@ class FollowController {
       res
         .status(200)
         .json(
-          await service.following(req.user.sub, req.query.page, req.query.limit)
+          await service.following(
+            req.params.id,
+            req.query.page,
+            req.query.limit
+          )
         );
     } catch (error) {
       next(error);
@@ -34,7 +38,11 @@ class FollowController {
       res
         .status(200)
         .json(
-          await service.followers(req.user.sub, req.query.page, req.query.limit)
+          await service.followers(
+            req.params.id,
+            req.query.page,
+            req.query.limit
+          )
         );
     } catch (error) {
       next(error);

@@ -16,6 +16,7 @@ class PublicationService {
       page: publications.page,
       itemsPerPage: publications.limit,
       totalPage: publications.totalPages,
+      totalPublications: publications.totalDocs,
       publications: publications.docs,
     };
   }
@@ -49,6 +50,7 @@ class PublicationService {
       Publication: myFeed.docs,
       page: myFeed.page,
       itemsPerPage: myFeed.limit,
+      totalPublications: myFeed.totalDocs,
       totalPage: myFeed.totalPages,
     };
   }

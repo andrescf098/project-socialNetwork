@@ -10,12 +10,16 @@ const UserSchema = new Schema({
     type: String,
     required: true,
   },
-  email: {
+  nick: {
     type: String,
     required: true,
     unique: true,
   },
-  nick: {
+  biography: {
+    type: String,
+    required: false,
+  },
+  email: {
     type: String,
     required: true,
     unique: true,

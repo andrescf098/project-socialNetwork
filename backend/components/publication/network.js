@@ -9,8 +9,8 @@ const {
   updatePublicationSchema,
 } = require("./schema");
 const {
-  checkIdForUser,
   checkAuthorizedRoles,
+  checkIdPublicationForUser,
 } = require("../../middlewares/auth.handler");
 const ROLES = require("../../utils/permissions.util");
 const router = express.Router();
@@ -58,10 +58,9 @@ router.post(
 );
 
 router.post(
-  "/upload/:id",
+  "/upload/:id_publication",
   [
     passport.authenticate("jwt", { session: false }),
-    checkIdForUser(),
     checkAuthorizedRoles(...ROLES.registeredUser),
     upload.single("file0"),
   ],
@@ -74,7 +73,7 @@ router.patch(
     passport.authenticate("jwt", { session: false }),
     validatorHandler(getPublicationSchema, "params"),
     validatorHandler(updatePublicationSchema, "body"),
-    checkIdForUser(),
+    checkIdPublicationForUser(),
     checkAuthorizedRoles(...ROLES.registeredUser),
   ],
   controller.update
@@ -85,7 +84,7 @@ router.delete(
   [
     passport.authenticate("jwt", { session: false }),
     validatorHandler(getPublicationSchema, "params"),
-    checkIdForUser(),
+    checkIdPublicationForUser(),
     checkAuthorizedRoles(...ROLES.registeredUser),
   ],
   controller.delete
