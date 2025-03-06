@@ -9,8 +9,7 @@ export const fetchHelper = async (url, method, body = {}, token = "") => {
         Authorization: `Bearer ${token}`,
       },
     };
-    const response = await fetch(url, options);
-    return response;
+    return await fetch(url, options);
   } else if (body && !token) {
     options = {
       ...options,
@@ -19,8 +18,7 @@ export const fetchHelper = async (url, method, body = {}, token = "") => {
         "Content-Type": "application/json",
       },
     };
-    const response = await fetch(url, options);
-    return response;
+    return await fetch(url, options);
   } else if (body && token && method != "DELETE") {
     options = {
       ...options,
@@ -30,8 +28,7 @@ export const fetchHelper = async (url, method, body = {}, token = "") => {
         Authorization: `Bearer ${token}`,
       },
     };
-    const response = await fetch(url, options);
-    return response;
+    return await fetch(url, options);
   } else if (method == "DELETE") {
     options = {
       ...options,
@@ -39,10 +36,8 @@ export const fetchHelper = async (url, method, body = {}, token = "") => {
         Authorization: `Bearer ${token}`,
       },
     };
-    const response = await fetch(url, options);
-    return response;
+    return await fetch(url, options);
   } else {
-    const response = await fetch(url, options);
-    return response;
+    return await fetch(url, options);
   }
 };

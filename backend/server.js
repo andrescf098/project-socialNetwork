@@ -29,7 +29,14 @@ routerApi(app);
 app.listen(config.port, () => {
   console.log("Server is running on port: " + config.port);
 });
-connect();
+
+connect()
+  .then(() => {
+    console.log("Database is connected");
+  })
+  .catch((error) => {
+    console.log(error);
+  });
 
 require("./utils/auth.util");
 app.use(boomErrorHandler);

@@ -44,7 +44,6 @@ router.get(
     passport.authenticate("jwt", { session: false }),
     checkAuthorizedRoles(...ROLES.registeredUser),
   ],
-
   controller.count
 );
 
