@@ -9,3 +9,5 @@ For initialize, create the file .env with the variables environment that show in
 Note: It is important that in server.js have url of frontend on the "whiteListCORS"
 
 ## Frontend
+
+Install dependencies with your package manager (yarn, pnpm or npm). Run wuth the command "run dev".
